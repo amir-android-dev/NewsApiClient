@@ -21,9 +21,9 @@ class GetNewsHeadlinesUseCase(private val newsRepositories: NewsRepositories) {
       We could get some data from the repository, modify it and return as another type.
       But in this project, for this scenario we just return the data taken from the repository
      */
-    suspend fun execute(): Resource<APIResponse> {
+    suspend fun execute(country:String, page:Int): Resource<APIResponse> {
 
-        return newsRepositories.getNewsHeadLines()
+        return newsRepositories.getNewsHeadLines(country, page)
     }
 
 }

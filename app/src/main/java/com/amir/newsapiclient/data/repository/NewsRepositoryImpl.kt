@@ -11,8 +11,8 @@ import retrofit2.Response
 class NewsRepositoryImpl(private val newsRemoteDataSource: NewsRemoteDataSource) :
     NewsRepositories {
 //Now to implement this getNewsHeadlines function we will use that newly created responseToResult
-    override suspend fun getNewsHeadLines(): Resource<APIResponse> {
-       return responseToResource(newsRemoteDataSource.getTopHeadLines())
+    override suspend fun getNewsHeadLines(country:String, page:Int): Resource<APIResponse> {
+       return responseToResource(newsRemoteDataSource.getTopHeadLines(country, page))
     }
 //We are going to use this resource class to keep track of the status of the response returned from the api.
     private fun responseToResource(response: Response<APIResponse>): Resource<APIResponse> {

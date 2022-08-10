@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+
 }
 
 android {
@@ -39,6 +41,13 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    //viewModel
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    //liveData
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+    //annotation processor
+    //noinspection LifecycleAnnotationProcessorWithJava8
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.5.1'
     //gson
     implementation 'com.google.code.gson:gson:2.8.9'
     //coroutines

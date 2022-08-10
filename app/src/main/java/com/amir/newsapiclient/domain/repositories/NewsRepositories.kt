@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface NewsRepositories {
 //That means it can be a loading api response, successful  api response or a failed api response.
-    suspend fun getNewsHeadLines():Resource<APIResponse>
+    suspend fun getNewsHeadLines(country:String, page:Int):Resource<APIResponse>
 
     suspend fun getSearchedNews(searchQuery:String):Resource<APIResponse>
 
