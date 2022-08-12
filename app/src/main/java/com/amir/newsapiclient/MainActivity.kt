@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.amir.newsapiclient.databinding.ActivityMainBinding
+import com.amir.newsapiclient.presentation.adapter.NewsAdapter
 import com.amir.newsapiclient.presentation.viewModel.NewsViewModel
 import com.amir.newsapiclient.presentation.viewModel.NewsViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,6 +21,9 @@ class MainActivity : AppCompatActivity() {
     //So, we will construct and instance of view model inside this main activity and share it among fragments. Let’s define a view model here.
     @Inject
     lateinit var factory: NewsViewModelFactory
+    //go to the MainActivity and create an object reference variable for the NewsAdapter .
+    @Inject
+    lateinit var newsAdapter: NewsAdapter
     lateinit var viewModel: NewsViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

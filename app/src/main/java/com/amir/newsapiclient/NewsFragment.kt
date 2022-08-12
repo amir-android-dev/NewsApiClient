@@ -31,14 +31,15 @@ class NewsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentNewsBinding.bind(view)
         viewModel = (activity as MainActivity).viewModel
+         //write codes to share this injected dependency from the main activity.
+        newsAdapter = (activity as MainActivity).newsAdapter
         initRecyclerView()
         viewNewsList()
     }
 
-
     private fun initRecyclerView() {
-        newsAdapter = NewsAdapter()
-//        //instead we can use kotlin apply funtion
+      //  newsAdapter = NewsAdapter()
+//        //instead we can use kotlin apply function
 //        binding.rvNews.adapter = newsAdapter
 //        binding.rvNews.layoutManager= LinearLayoutManager(activity)
         binding.rvNews.apply {
