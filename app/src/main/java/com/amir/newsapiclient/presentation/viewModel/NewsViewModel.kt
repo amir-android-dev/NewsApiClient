@@ -11,13 +11,19 @@ import androidx.lifecycle.viewModelScope
 import com.amir.newsapiclient.data.model.APIResponse
 import com.amir.newsapiclient.data.util.Resource
 import com.amir.newsapiclient.domain.usecase.GetNewsHeadlinesUseCase
+import com.amir.newsapiclient.domain.usecase.GetSearchedNewsUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
+//7
 //in this class we are going to write a function to get the list of news head lines
 //we will get it as a mutable liveData of type resource
-class NewsViewModel(private val app:Application, private val getNewsHeadlinesUseCase: GetNewsHeadlinesUseCase) : AndroidViewModel(app) {
+class NewsViewModel(
+    private val app: Application,
+    private val getNewsHeadlinesUseCase: GetNewsHeadlinesUseCase,
+    private val getSearchedNewsUseCase: GetSearchedNewsUseCase
+) : AndroidViewModel(app) {
 
     val newsHeadlines: MutableLiveData<Resource<APIResponse>> = MutableLiveData()
 
@@ -29,16 +35,16 @@ class NewsViewModel(private val app:Application, private val getNewsHeadlinesUse
         try {
 
 
-       if(isNetworkAvailable(app)){
+            if (isNetworkAvailable(app)) {
 
-           val apiResult = getNewsHeadlinesUseCase.execute(country, page)
-           newsHeadlines.postValue(apiResult)
-       }else{
-           newsHeadlines.postValue(Resource.Error("Internet is not Available"))
-       }
-    }catch (e:Exception){
-        newsHeadlines.postValue(Resource.Error(e.message.toString()))
-    }
+                val apiResult = getNewsHeadlinesUseCase.execute(country, page)
+                newsHeadlines.postValue(apiResult)
+            } else {
+                newsHeadlines.postValue(Resource.Error("Internet is not Available"))
+            }
+        } catch (e: Exception) {
+            newsHeadlines.postValue(Resource.Error(e.message.toString()))
+        }
     }
 
     //a function to check the internet availability
@@ -71,5 +77,22 @@ class NewsViewModel(private val app:Application, private val getNewsHeadlinesUse
         }
         return false
     }
+
+    //search
+    val searchedNews: MutableLiveData<Resource<APIResponse>> = MutableLiveData()
+    fun searchNews(country: String, searchQuery: String, page: Int) = viewModelScope.launch {
+        searchedNews.postValue(Resource.Loading())
+        try {
+            if (isNetworkAvailable(app)) {
+                val response = getSearchedNewsUseCase.execute(country, searchQuery, page)
+                searchedNews.postValue(response)
+            } else {
+                searchedNews.postValue(Resource.Error("No Internet connection"))
+            }
+        } catch (e: Exception) {
+    searchedNews.postValue(Resource.Error(e.message.toString()))
+        }
+    }
+
 
 }

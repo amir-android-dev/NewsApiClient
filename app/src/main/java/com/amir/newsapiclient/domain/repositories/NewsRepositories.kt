@@ -6,12 +6,12 @@ import com.amir.newsapiclient.data.model.Article
 import com.amir.newsapiclient.data.util.Resource
 import kotlinx.coroutines.flow.Flow
 
-
+//4
 interface NewsRepositories {
 //That means it can be a loading api response, successful  api response or a failed api response.
     suspend fun getNewsHeadLines(country:String, page:Int):Resource<APIResponse>
 
-    suspend fun getSearchedNews(searchQuery:String):Resource<APIResponse>
+    suspend fun getSearchedNews(country:String,searchQuery:String,page:Int):Resource<APIResponse>
 
     suspend fun savedNews(article: Article)
 
@@ -36,4 +36,5 @@ Since this function returns a data stream,we don’t need to write this function
    We don’t want to pause this function and resume it at a later time.
      */
  fun getSavedNews(): Flow<List<Article>>
+
 }

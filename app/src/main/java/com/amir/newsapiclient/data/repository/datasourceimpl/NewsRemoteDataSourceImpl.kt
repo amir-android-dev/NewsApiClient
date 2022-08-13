@@ -4,7 +4,7 @@ import com.amir.newsapiclient.data.api.NewsAPIService
 import com.amir.newsapiclient.data.model.APIResponse
 import com.amir.newsapiclient.data.repository.datasource.NewsRemoteDataSource
 import retrofit2.Response
-
+//3
 class NewsRemoteDataSourceImpl(  private val newsAPIService: NewsAPIService):NewsRemoteDataSource {
 
     //a function to communicate with API to impelement the NewsAPIService
@@ -15,5 +15,13 @@ class NewsRemoteDataSourceImpl(  private val newsAPIService: NewsAPIService):New
      */
     override suspend fun getTopHeadLines(country:String, page:Int): Response<APIResponse> {
       return newsAPIService.getTopHeadLines(country, page)
+    }
+
+    override suspend fun getSearchedNews(
+        country: String,
+        searchQuery: String,
+        page: Int
+    ): Response<APIResponse> {
+       return newsAPIService.getSearchedTopHeadLines(country, searchQuery, page)
     }
 }

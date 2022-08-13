@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +16,9 @@ import com.amir.newsapiclient.data.util.Resource
 import com.amir.newsapiclient.databinding.FragmentNewsBinding
 import com.amir.newsapiclient.presentation.adapter.NewsAdapter
 import com.amir.newsapiclient.presentation.viewModel.NewsViewModel
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class NewsFragment : Fragment() {
@@ -63,6 +67,7 @@ class NewsFragment : Fragment() {
         }
         initRecyclerView()
         viewNewsList()
+        setSearchView()
     }
 
     //2
@@ -163,7 +168,76 @@ class NewsFragment : Fragment() {
                 is Resource.Loading -> {
                     showProgressBar()
                 }
+            }
+        })
+    }
 
+    //we will create a function to get the search query. In order to do that, we need to implement the setOnQueryTextListener of the search view.
+    private fun setSearchView() {
+        binding.svNews.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            //onQueryTextSubmit will be invoked, when the user type the search query and tap on the enter button of the keyboard
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.searchNews("us",query.toString(),page)
+                viewSearchedNews()
+                return false
+            }
+              //This onQueryTextChange function will be invoked for each text change in the search view.
+            override fun onQueryTextChange(newText: String?): Boolean {
+                  //MainScope is a coroutine launcher specially created for user interface components. MainScope().launch. Then delay by 2 seconds.
+                  MainScope().launch {
+                      delay(2000)
+                      viewModel.searchNews("us",newText.toString(),page)
+                      viewSearchedNews()
+                  }
+                  return false
+            }
+        })
+        //There is a close button in the right corner of the search view. We should write codes to reset the list, if the user decided to click on the close button
+   binding.svNews.setOnCloseListener(object :SearchView.OnCloseListener{
+       override fun onClose(): Boolean {
+          initRecyclerView()
+           viewNewsList()
+           return false
+       }
+
+   })
+    }
+
+    //Displaying a searched list is same as displaying a normal list.
+
+    fun viewSearchedNews() {
+        //   viewModel.getNewsHeadLines(country, page)
+        viewModel.searchedNews.observe(viewLifecycleOwner, { response ->
+            when (response) {
+                is Resource.Success -> {
+
+                    hideProgressBar()
+                    response.data?.let {
+                        Log.i("MYTAG", "came here ${it.articles.toList().size}")
+                        newsAdapter.differ.submitList(it.articles.toList())
+                        //7
+                        if (it.totalResults % 20 == 0) {
+                            //st after submitting list to the adapter we can write codes to check if the current  page is the last page.
+                            //20 is the default page size of the api.
+                            pages = it.totalResults / 20
+                        } else {
+                            //If current page number equals to the number of pages that means list is in the last page.
+                            pages = it.totalResults / 20 + 1
+                        }
+                        isLastPage = page == pages
+                    }
+                }
+                is Resource.Error -> {
+                    hideProgressBar()
+                    response.message?.let {
+                        Toast.makeText(activity, "An error occurred : $it", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+
+                is Resource.Loading -> {
+                    showProgressBar()
+                }
             }
         })
     }
