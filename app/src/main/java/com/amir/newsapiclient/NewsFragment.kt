@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amir.newsapiclient.data.util.Resource
@@ -23,8 +24,10 @@ class NewsFragment : Fragment() {
     private var country = "us"
     private var page = 1
     private var isScrolling = false  //1
+
     //to check the loading
     private var isLoading = false  //3
+
     //to check the last page
     private var isLastPage = false  //6
     private var pages = 0  //6
@@ -42,9 +45,26 @@ class NewsFragment : Fragment() {
         viewModel = (activity as MainActivity).viewModel
         //write codes to share this injected dependency from the main activity.
         newsAdapter = (activity as MainActivity).newsAdapter
+        //1
+        // invoke news adapters setOnItemClickListener we just created.
+        newsAdapter.setOnItemClickListener {
+            //We are going to pass that article instance to the info fragment using navigations arguments.
+            //To do that we have to make the Article instance Serializable.
+            val bundle = Bundle().apply {
+                putSerializable("selected_article", it)
+            }
+            //codes to navigate from news fragment to the info fragment using navController.
+            findNavController().navigate(
+                R.id.action_newsFragment_to_infoFragment,
+                //In order to receive this, we need to add and argument to the info fragment
+                bundle
+            )
+
+        }
         initRecyclerView()
         viewNewsList()
     }
+
     //2
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -54,6 +74,7 @@ class NewsFragment : Fragment() {
                 isScrolling = true
             }
         }
+
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             //we need to get instance of layoutManager
